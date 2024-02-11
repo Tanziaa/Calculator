@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: rgb(0, 0, 0);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .calculator {
+            background-color: #c7c6c6;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 500px;
+        }
+
+        .calculator h2 {
+            font-size: 36px;
+            text-align: right;
+            margin: 0;
+            padding: 10px 20px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 10px;
+            padding: 20px 0;
+        }
+
+        .buttons span {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 60px;
+            font-size: 24px;
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .buttons span:hover {
+            background-color: #cfc69e;
+        }
+
+        .buttons span.operator {
+            background-color: #ff9500;
+            color: #fff;
+        }
+
+        .buttons span.operator:hover {
+            background-color: #ff8100;
+        }
+
+        #clear {
+            grid-column: span 2;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h2 id="value">0</h2>
+        <div class="buttons">
+            <span id="clear">C</span>
+            <span id="divide" class="operator">/</span>
+            <span id="multiply" class="operator">*</span>
+            <span id="seven">7</span>
+            <span id="eight">8</span>
+            <span id="nine">9</span>
+            <span id="subtract" class="operator">-</span>
+            <span id="four">4</span>
+            <span id="five">5</span>
+            <span id="six">6</span>
+            <span id="add" class="operator">+</span>
+            <span id="one">1</span>
+            <span id="two">2</span>
+            <span id="three">3</span>
+            <span id="equals" class="operator">=</span>
+            <span id="zero">0</span>
+            <span id="decimal">.</span>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const display = document.getElementById('value');
+            let currentOperand = '';
+            let previousOperand = '';
+            let operation = undefined;
+
+            function updateDisplay() {
+                display.innerText = currentOperand;
+            }
+
+            function clear() {
+                currentOperand = '';
+                previousOperand = '';
+                operation = undefined;
+                updateDisplay();
+            }
+
+            function appendNumber(number) {
+                if (number === '.' && currentOperand.includes('.')) return;
+                currentOperand += number.toString();
+                updateDisplay();
+            }
+
+            function chooseOperation(op) {
+                if (currentOperand === '') return;
+                if (previousOperand !== '') {
+                    compute();
+                }
+                operation = op;
+                previousOperand = currentOperand;
+                currentOperand = '';
+            }
+
+            function compute() {
+                let computation;
+                const prev = parseFloat(previousOperand);
+                const current = parseFloat(currentOperand);
+                if (isNaN(prev) || isNaN(current)) return;
+                switch (operation) {
+                    case '+':
+                        computation = prev + current;
+                        break;
+                    case '-':
+                        computation = prev - current;
+                        break;
+                    case '*':
+                        computation = prev * current;
+                        break;
+                    case '/':
+                        computation = prev / current;
+                        break;
+                    default:
+                        return;
+                }
+                currentOperand = computation;
+                operation = undefined;
+                previousOperand = '';
+                updateDisplay();
+            }
+
+            const buttons = document.querySelectorAll('span');
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    if (button.id === 'clear') {
+                        clear();
+                    } else if (button.classList.contains('operator')) {
+                        chooseOperation(button.innerText);
+                    } else if (button.id === 'equals') {
+                        compute();
+                    } else {
+                        appendNumber(button.innerText);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
